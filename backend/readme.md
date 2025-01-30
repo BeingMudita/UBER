@@ -27,7 +27,6 @@ Example:
   "password": "password123"
 }
 
-###EXAMPLE RESPONSE
 {
   "token": "JWT_TOKEN_HERE",
   "user": {
@@ -38,4 +37,17 @@ Example:
     },
     "email": "john.doe@example.com"
   }
+}
+
+`/users/login`
+
+### Request Body
+The request body should be in JSON format and include the following fields:
+-`email`:  A string representing a valid email address with a minimum length of 5 characters (required)
+- `password`: A string with a minimum length of 6 characters (required)
+
+### Example Response
+{
+  "email": "john.doe@example.com",
+  "password": "password123"
 }
