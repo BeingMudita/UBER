@@ -45,7 +45,7 @@ module.exports.getDistanceTime = async (req, res, next) => {
 };
 
 module.exports.getAutoCompleteSuggestions = async (req, res, next) => {
-    try { 
+    try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
