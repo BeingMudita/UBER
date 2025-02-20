@@ -1,41 +1,26 @@
-const { validationResult } = require("express-validator");
 const rideService = require("../services/ride.service");
-const mapService = require("../services/maps.service");
-const getFare = require("../services/ride.service")
-// const rideModel = require("../models/ride.model");
-// const sendMessageToSocketId = require("../socket");
-
 
 module.exports.createRide = async (req, res) => {
     try {
-        console.log("Received User:", req.user);
-        console.log("Received Data:", req.body);
-
+        const user = req.user; // Extract user
         const { pickup, destination, vehicleType } = req.body;
-        const user = req.user;
 
         if (!user || !pickup || !destination || !vehicleType) {
-            throw new Error("All fields are required");
+            return res.status(400).json({ error: "All fields are required" });
         }
 
-        const pickupCoordinates = await mapService.getAddressCoordinate(pickup);
-        const destinationCoordinates = await mapService.getAddressCoordinate(destination);
-        const fare = await getFare(pickupCoordinates, destinationCoordinates);
+        // Calculate fare
+        const fareDetails = await rideService.getFare(pickup, destination);
+        const fare = fareDetails[vehicleType]; // Get fare for the selected vehicle type
 
-        const ride = await rideService.createRide({
-            user: user._id,  // Store only user ID
-            pickup: pickupCoordinates,
-            destination: destinationCoordinates,
-            vehicleType,
-            fare: fare[vehicleType]
-        });
-
+        // Create ride
+        const ride = await rideService.createRide({ user, pickup, destination, fare, vehicleType });
         res.status(201).json(ride);
     } catch (error) {
         console.error("Error creating ride:", error.message);
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ error: "Internal Server Error" });
     }
-};
+};  
 
 
 

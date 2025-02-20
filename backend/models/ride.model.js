@@ -55,11 +55,11 @@ const rideSchema = new mongoose.Schema({
         type: String,
     },
 
-    // otp: {
-    //     type: String,
-    //     select: false,
-    //     required: true,
-    // },
+    otp: {
+        type: String,
+        select: false,
+        required: true,
+    },
 })
 
 module.exports = mongoose.model('ride', rideSchema);
