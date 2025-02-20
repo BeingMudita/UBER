@@ -3,12 +3,12 @@ const router = express.Router();
 const {body, validationResult} = require('express-validator')
 const authMiddleware =require("../middleware/auth.middleware");
 const rideController = require("../controller/ride.controller")
+const { query } = require('express-validator');
+
 
 router.post('/create', 
     authMiddleware.authUser, 
     (req, res, next) => {
-        console.log("Received User:", req.user);
-        console.log("Received Data:", req.body);
         next();
     },
     body('pickup').isString().isLength({ min: 3 }).withMessage('Invalid pickup address'),
@@ -26,12 +26,12 @@ router.post('/create',
 
 
 
-// router.get('/get-fare',
-//     authMiddleware.authUser,
-//     query('pickup').isString().isLength({ min: 3 }).withMessage('Invalid pickup address'),
-//     query('destination').isString().isLength({ min: 3 }).withMessage('Invalid destination address'),
-//     rideController.getFare
-// )
+router.get('/get-fare',
+    authMiddleware.authUser,
+    query('pickup').isString().isLength({ min: 3 }).withMessage('Invalid pickup address'),
+    query('destination').isString().isLength({ min: 3 }).withMessage('Invalid destination address'),
+    rideController.getFare
+)
 
 // router.post('/confirm',
 //     authMiddleware.authCaptain,

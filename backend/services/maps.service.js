@@ -68,20 +68,23 @@ module.exports.getAutoCompleteSuggestions = async (input) => {
     }
 
     const apiKey = process.env.MAPS_API;
-    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(input)}.json?access_token=${apiKey}&country=IN&types=place,locality,neighborhood,region`;
+    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(input)}.json?access_token=${apiKey}&country=IN&language=en&types=place,locality,neighborhood,region,district,postcode`;
 
     try {
         const response = await axios.get(url);
         
         if (response.status === 200 && response.data.features.length > 0) {
-            return response.data.features.map((place) => ({
-                name: place.text,
-                full_name: place.place_name,
-                coordinates: {
-                    lat: place.center[1],
-                    lng: place.center[0],
-                },
-            }));
+            return response.data.features
+                .filter(place => place.context && place.context.some(ctx => ctx.id.includes("country.356"))) // Ensures it's in India
+                .map((place) => ({
+                    name: place.text,
+                    full_name: place.place_name,
+                    coordinates: {
+                        lat: place.center[1],
+                        lng: place.center[0],
+                    },
+                }))
+                .slice(0, 10); // Limit suggestions to 10 results
         } else {
             throw new Error("No suggestions found");
         }
